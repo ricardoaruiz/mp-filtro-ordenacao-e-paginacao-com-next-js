@@ -8,14 +8,26 @@ type OrderFilter = {
   search?: string;
 }
 
-type OrderSort = 'order_date' | 'amount_in_cents' | 'status' | 'created_at' | 'updated_at'
-type OrderListRequest = APIRequest<OrderFilter, OrderSort>
+type OrderListRequest = APIRequest<OrderFilter>
 type OrderListResponse = APIResponse<Order[]>
 
 const BASE_URL= 'https://apis.codante.io/api/orders-api'
 const ORDER_URL = `${BASE_URL}/orders`
 
-const buildUrl = ({ filter, order = { field: 'order_date', direction: 'desc' }, page = 1 }: OrderListRequest = {}): string => {
+/**
+ * Builds a URL based on the provided filter, order, and page parameters.
+ * 
+ * @param filter - The filter object containing status and search parameters.
+ * @param order - The field to order by (default is 'order_date').
+ * @param page - The page number (default is 1).
+ * @returns The constructed URL string.
+ */
+const buildUrl = ({ 
+  filter, 
+  order = 'order_date', 
+  page = 1 
+}: OrderListRequest = {}): string => {
+  
   const url = new URL(ORDER_URL);
   const params = new URLSearchParams();
 
@@ -29,8 +41,7 @@ const buildUrl = ({ filter, order = { field: 'order_date', direction: 'desc' }, 
   }
 
   if (order) {
-    const ordenation = order.direction === 'desc' ? '-' : ''
-    params.append('sort', `${ordenation}${order.field}`);
+    params.append('sort', order);
   }
 
   if (page) {
@@ -38,12 +49,29 @@ const buildUrl = ({ filter, order = { field: 'order_date', direction: 'desc' }, 
   }
 
   url.search = params.toString();
+
   return url.toString();
 }
 
-export const orderList = async ({ filter, order, page = 1 }: OrderListRequest = {}): Promise<OrderListResponse> => {
+  /**
+   * Retrieves a list of orders based on the provided filter, order, and page parameters.
+   * 
+   * @param filter - The filter object containing status and search parameters.
+   * @param order - The field to order by (default is 'order_date').
+   * @param page - The page number (default is 1).
+   * @returns The API response containing the list of orders, links, and meta information.
+   */
+export const orderList = async ({ 
+  filter, 
+  order, 
+  page = 1 
+}: OrderListRequest = {}): Promise<OrderListResponse> => {
+
   const response = await fetch(buildUrl({ filter, order, page }), {
     cache: 'no-cache',
+    next: {
+      tags: ['orders']
+    }
   });
 
   const result = await response.json() as OrderListResponse;

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Table,
   TableBody,
@@ -7,11 +9,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from './ui/badge';
-import { ChevronsUpDown } from 'lucide-react';
-import { ComponentProps } from 'react';
+import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-react';
+import { ComponentProps, useMemo } from 'react';
 import { Order } from '@/model';
 import { cn } from '@/lib/utils';
 import { convertToBrazilianReal } from '@/lib/currency';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { SortDirection } from '@/actions/types';
+import { buildPathWithSearchParams } from '@/helpers/url';
 
 
 type OrdersTableProps = ComponentProps<typeof Table> & {
@@ -19,21 +24,51 @@ type OrdersTableProps = ComponentProps<typeof Table> & {
 };
 
 export default function OrdersTable({ data, className, ...props }: OrdersTableProps) {
+  const searchParams = useSearchParams()
+  const pathName = usePathname()
+  const route = useRouter()  
+  const sort = searchParams.get('sort') ?? ''
+  
+  const getSortIndicator = (fieldName: string) => {   
+    if (sort && sort.includes(fieldName)) {
+      return sort.startsWith('-') 
+        ? <ChevronDown className="w-4"/> 
+        : <ChevronUp className="w-4"/>
+     }
+     return <ChevronsUpDown className="w-4"/>
+  }
+
+  const handleSortChange = (fieldName: string) => {
+    let value = fieldName;    
+    if (sort && sort.includes(fieldName)) {
+      value = sort.startsWith('-') ? '' : `-${fieldName}`
+    } 
+
+    const url = buildPathWithSearchParams({
+      pathName, 
+      searchParams, 
+      search: { name:'sort', value}}) 
+
+    route.replace(url, {
+      scroll: false
+    })
+  }
+
   return (
     <Table className={cn(className)} {...props}>
       <TableHeader>
         <TableRow className="w-full">
           <TableHead className="table-cell">Cliente</TableHead>
           <TableHead className="table-cell">Status</TableHead>
-          <TableHead className="table-cell cursor-pointer justify-end items-center gap-1">
+          <TableHead className="table-cell cursor-pointer justify-end items-center gap-1" onClick={() => handleSortChange('created_at')}>
             <div className="flex items-center gap-1">
               Data
-              <ChevronsUpDown className="w-4" />
+              {getSortIndicator('created_at')}
             </div>
           </TableHead>
-          <TableHead className="text-right cursor-pointer flex justify-end items-center gap-1">
+          <TableHead className="text-right cursor-pointer flex justify-end items-center gap-1" onClick={() => handleSortChange('amount_in_cents')}>
             Valor
-            <ChevronsUpDown className="w-4" />
+            {getSortIndicator('amount_in_cents')}
           </TableHead>
         </TableRow>
       </TableHeader>

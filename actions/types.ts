@@ -1,15 +1,11 @@
 // API Request
-export type APIRequest<TFilter, TOrder> = {
+export type APIRequest<TFilter> = {
   filter?: TFilter;
-  order?: APISort<TOrder>;
+  order?: string;
   page?: number;
 }
 
-type APISort<T> = {
-  field: T;
-  direction: 'asc' | 'desc';
-}
-
+export type SortDirection = 'asc' | 'desc';
 
 // API Response
 export type APIResponse<T> = {

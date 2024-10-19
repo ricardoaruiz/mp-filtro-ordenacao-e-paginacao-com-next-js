@@ -17,16 +17,20 @@ type ComponentProps = {
     search?: string
     status?: string
     page?: string
+    sort?: string
   }
 }
 
 export default async function Component({ searchParams }: ComponentProps = {}) {  
+
   const orderListData = await orderList({
     filter: {
       search: searchParams?.search,
       status: searchParams?.status
     },
-    page: searchParams?.page ? Number(searchParams?.page) : 1
+    order: searchParams?.sort,
+    page: Number(searchParams?.page ?? 1)
+    
   })  
 
   return (
