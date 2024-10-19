@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import useDebounce from '@/hooks/useDebounce';
+import { buildPathWithSearchParams } from '@/helpers/url';
 
 export default function SearchInput() {
   const firstRender = useRef(true)
@@ -21,15 +22,15 @@ export default function SearchInput() {
       firstRender.current = false
       return
     }
-
-    const params = new URLSearchParams(searchParams)
     
-    debouncedSearchTerm === '' 
-      ? params.delete('search') 
-      : params.set('search', debouncedSearchTerm.toLowerCase())
+    const url = buildPathWithSearchParams({
+      pathName, 
+      searchParams, 
+      searchName:'search', 
+      searchValue: debouncedSearchTerm
+    })    
 
-    route.push(`${pathName}?${params.toString()}`)
-    
+    route.push(url)    
   }, [debouncedSearchTerm, pathName, route, searchParams])
 
   return (

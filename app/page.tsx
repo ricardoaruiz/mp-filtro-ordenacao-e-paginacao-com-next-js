@@ -15,13 +15,15 @@ import {
 type ComponentProps = {
   searchParams?: {
     search?: string
+    status?: string
   }
 }
 
 export default async function Component({ searchParams }: ComponentProps = {}) {  
   const orderListData = await orderList({
     filter: {
-      search: searchParams?.search
+      search: searchParams?.search,
+      status: searchParams?.status
     }
   })  
 
