@@ -1,3 +1,4 @@
+import { orderList } from '@/actions/order-list';
 import FilterDropdown from '@/components/filter-dropdown';
 import OrdersTable from '@/components/orders-table';
 import Pagination from '@/components/pagination';
@@ -11,7 +12,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default async function Component() {
+export default async function Component() {  
+  const orderListData = await orderList()  
+
   return (
     <main className="container px-1 py-10 md:p-10">
       <Card>
@@ -26,7 +29,7 @@ export default async function Component() {
           </div>
         </CardHeader>
         <CardContent>
-          <OrdersTable />
+          <OrdersTable data={orderListData.data}/>
           <div className="mt-8">
             <Pagination />
           </div>
