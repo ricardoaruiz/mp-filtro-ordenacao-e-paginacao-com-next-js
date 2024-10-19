@@ -12,8 +12,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default async function Component() {  
-  const orderListData = await orderList()  
+type ComponentProps = {
+  searchParams?: {
+    search?: string
+  }
+}
+
+export default async function Component({ searchParams }: ComponentProps = {}) {  
+  const orderListData = await orderList({
+    filter: {
+      search: searchParams?.search
+    }
+  })  
 
   return (
     <main className="container px-1 py-10 md:p-10">

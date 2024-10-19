@@ -41,8 +41,10 @@ const buildUrl = ({ filter, order = { field: 'order_date', direction: 'desc' }, 
   return url.toString();
 }
 
-export const orderList = async ({ filter, order, page = 10 }: OrderListRequest = {}): Promise<OrderListResponse> => {
-  const response = await fetch(buildUrl({ filter, order, page }));
+export const orderList = async ({ filter, order, page = 1 }: OrderListRequest = {}): Promise<OrderListResponse> => {
+  const response = await fetch(buildUrl({ filter, order, page }), {
+    cache: 'no-cache',
+  });
   const result = await response.json() as OrderListResponse;
   
   return {
