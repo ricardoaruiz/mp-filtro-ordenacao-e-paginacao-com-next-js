@@ -1,3 +1,6 @@
+'use client';
+
+import { MetaLink } from '@/actions/types';
 import {
   Pagination as PaginationComponent,
   PaginationContent,
@@ -7,38 +10,66 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { buildPathWithSearchParams } from '@/helpers/url';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function Pagination() {
+type PaginationProps = {
+  data: MetaLink[]
+}
+
+export default function Pagination({ data = [] }: PaginationProps) {
+  const pathName = usePathname()
+  const searchParams = useSearchParams()
+  
   return (
     <PaginationComponent>
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious />
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink isActive={true}>1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink>2</PaginationLink>
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink>3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink>8</PaginationLink>
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink>9</PaginationLink>
-        </PaginationItem>
-        <PaginationItem className="hidden md:inline-flex">
-          <PaginationLink>10</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext />
-        </PaginationItem>
+        {data.map((link, index) => {
+          const isFirst = index === 0
+          const isLast = index === data.length - 1
+          const isFirstOrLast = isFirst || isLast
+
+          if (isFirstOrLast) {
+            const url = link.url ? new URL(link.url) : null
+
+            let to = ''
+            if (url) {
+              const params = new URLSearchParams(url.search)
+              const page = params.get('page')
+
+              to = page ? buildPathWithSearchParams({
+                pathName, 
+                searchParams, 
+                search: [
+                  { name:'page', value: page}
+                ]
+              }) : ''
+            }
+
+            return (
+              <PaginationItem key={link.label} className="hidden md:inline-flex">
+                {isFirst ? <PaginationPrevious href={to}/> : <PaginationNext href={to}/>}
+              </PaginationItem>
+            )
+          }
+
+          const isEllipsis = link.label === '...'
+          const url = !isEllipsis ? buildPathWithSearchParams({
+            pathName, 
+            searchParams, 
+            search: [
+              { name:'page', value: link.label}
+            ]
+          }) : '#'
+
+          return (
+          <PaginationItem key={`${link.label}${index}`} className="hidden md:inline-flex">
+            {isEllipsis 
+              ? <PaginationEllipsis /> 
+              : <PaginationLink href={url} isActive={link.active}>{link.label}</PaginationLink>
+            }
+          </PaginationItem>
+        )})}
       </PaginationContent>
     </PaginationComponent>
   );

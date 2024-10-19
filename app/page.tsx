@@ -16,6 +16,7 @@ type ComponentProps = {
   searchParams?: {
     search?: string
     status?: string
+    page?: string
   }
 }
 
@@ -24,7 +25,8 @@ export default async function Component({ searchParams }: ComponentProps = {}) {
     filter: {
       search: searchParams?.search,
       status: searchParams?.status
-    }
+    },
+    page: searchParams?.page ? Number(searchParams?.page) : 1
   })  
 
   return (
@@ -43,7 +45,7 @@ export default async function Component({ searchParams }: ComponentProps = {}) {
         <CardContent>
           <OrdersTable data={orderListData.data}/>
           <div className="mt-8">
-            <Pagination />
+            <Pagination data={orderListData.meta.links}/>
           </div>
         </CardContent>
       </Card>

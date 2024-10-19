@@ -19,17 +19,17 @@ export default function FilterDropdown() {
   const pathName = usePathname()
   const searchParams = useSearchParams()
   const route = useRouter()
-
-  const status = searchParams.get('status')
+  const status = searchParams.get('status')  ?? ''
   
-
   const handleOnValueChange = (value: string) => {
     
     const url = buildPathWithSearchParams({
       pathName, 
       searchParams, 
-      searchName:'status', 
-      searchValue: value
+      search: [
+        { name:'status', value: value},
+        { name:'page', value: '1'}
+      ]
     }) 
 
     route.push(url)
@@ -51,7 +51,7 @@ export default function FilterDropdown() {
       <DropdownMenuContent className="w-16">
         <DropdownMenuLabel>Filtrar por:</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={status ?? ''} onValueChange={handleOnValueChange}>
+        <DropdownMenuRadioGroup value={status} onValueChange={handleOnValueChange}>
           <DropdownMenuRadioItem value="">Todos</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="pending">
             Pendente

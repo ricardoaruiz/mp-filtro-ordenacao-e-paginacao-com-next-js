@@ -45,6 +45,7 @@ export const orderList = async ({ filter, order, page = 1 }: OrderListRequest = 
   const response = await fetch(buildUrl({ filter, order, page }), {
     cache: 'no-cache',
   });
+
   const result = await response.json() as OrderListResponse;
   
   return {

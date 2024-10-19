@@ -3,35 +3,33 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import useDebounce from '@/hooks/useDebounce';
+import { useState } from 'react';
 import { buildPathWithSearchParams } from '@/helpers/url';
+import useDebounceFunction from '@/hooks/useDebounceFunction';
 
 export default function SearchInput() {
-  const firstRender = useRef(true)
   const pathName = usePathname()
   const searchParams = useSearchParams()
   const route = useRouter()
 
-  const search = searchParams.get('search')
-  const [searchTerm, setSearchTerm] = useState(search ?? '')
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  const search = (searchParams.get('search') ?? '').toLowerCase()
+  const page = searchParams.get('page') ?? '1'
 
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
-    }
-    
+  const [searchTerm, setSearchTerm] = useState(search)  
+
+  useDebounceFunction(() => {
+    const isSearchChanged = searchTerm !== search
     const url = buildPathWithSearchParams({
       pathName, 
       searchParams, 
-      searchName:'search', 
-      searchValue: debouncedSearchTerm
+      search: [
+        { name:'search', value: searchTerm},
+        { name:'page', value: isSearchChanged ? '1' : page}
+      ]
     })    
 
     route.push(url)    
-  }, [debouncedSearchTerm, pathName, route, searchParams])
+  }, 300)
 
   return (
     <div className="relative">
@@ -41,7 +39,7 @@ export default function SearchInput() {
         placeholder="Busque por nome..."
         className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
       />
     </div>
   );

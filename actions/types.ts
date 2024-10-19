@@ -25,7 +25,7 @@ type Links = {
   prev: string | null;
 }
 
-type MetaLink = {
+export type MetaLink = {
   url: string | null;
   label: string;
   active: boolean;

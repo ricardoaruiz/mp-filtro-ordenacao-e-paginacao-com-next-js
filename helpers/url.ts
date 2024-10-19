@@ -1,18 +1,25 @@
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+type Search = {
+  name: string;
+  value: string;
+}
+
 type BuildPathWithSearchParams = {
   pathName: string
   searchParams: ReadonlyURLSearchParams
-  searchName: string
-  searchValue: string
+  search: Search[]
 }
 
-export const buildPathWithSearchParams = ({ pathName, searchParams, searchName, searchValue }: BuildPathWithSearchParams) => {
+export const buildPathWithSearchParams = ({ pathName, searchParams, search }: BuildPathWithSearchParams) => {
   const params = new URLSearchParams(searchParams)
 
-  searchValue === ''
-    ? params.delete(searchName)
-    : params.set(searchName, searchValue.toLowerCase())
+  search.forEach(({ name, value }) => {
+    value === ''
+      ? params.delete(name)
+      : params.set(name, value.toLowerCase())
+  })
+
 
   return `${pathName}?${params.toString()}`
 }
