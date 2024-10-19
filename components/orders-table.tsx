@@ -32,8 +32,8 @@ export default function OrdersTable({ data, className, ...props }: OrdersTablePr
   const getSortIndicator = (fieldName: string) => {   
     if (sort && sort.includes(fieldName)) {
       return sort.startsWith('-') 
-        ? <ChevronDown className="w-4"/> 
-        : <ChevronUp className="w-4"/>
+        ? <ChevronUp className="w-4"/> 
+        : <ChevronDown className="w-4"/>
      }
      return <ChevronsUpDown className="w-4"/>
   }
@@ -60,10 +60,10 @@ export default function OrdersTable({ data, className, ...props }: OrdersTablePr
         <TableRow className="w-full">
           <TableHead className="table-cell">Cliente</TableHead>
           <TableHead className="table-cell">Status</TableHead>
-          <TableHead className="table-cell cursor-pointer justify-end items-center gap-1" onClick={() => handleSortChange('created_at')}>
+          <TableHead className="table-cell cursor-pointer justify-end items-center gap-1" onClick={() => handleSortChange('order_date')}>
             <div className="flex items-center gap-1">
               Data
-              {getSortIndicator('created_at')}
+              {getSortIndicator('order_date')}
             </div>
           </TableHead>
           <TableHead className="text-right cursor-pointer flex justify-end items-center gap-1" onClick={() => handleSortChange('amount_in_cents')}>
@@ -86,7 +86,7 @@ export default function OrdersTable({ data, className, ...props }: OrdersTablePr
                 {order.status}
               </Badge>
             </TableCell>
-            <TableCell className="hidden md:table-cell">{order.created_at.toLocaleDateString('pt-BR')}</TableCell>
+            <TableCell className="hidden md:table-cell">{order.order_date.toLocaleDateString('pt-BR')}</TableCell>
             <TableCell className="text-right">{convertToBrazilianReal(order.amount_in_cents)}</TableCell>
           </TableRow>          
         ))}
