@@ -32,7 +32,7 @@ export default function FilterDropdown() {
       ]
     }) 
 
-    route.push(url)
+    route.replace(url)
   }
   
   return (
