@@ -21,7 +21,7 @@ type ComponentProps = {
   }
 }
 
-export default async function Component({ searchParams }: ComponentProps = {}) {  
+export default async function Component({ searchParams }: ComponentProps) {  
 
   const orderListData = await orderList({
     filter: {
