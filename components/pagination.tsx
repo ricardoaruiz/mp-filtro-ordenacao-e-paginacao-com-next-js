@@ -11,6 +11,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { buildPathWithSearchParams } from '@/helpers/url';
+import { cn } from '@/lib/utils';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 type PaginationProps = {
@@ -41,14 +42,18 @@ export default function Pagination({ data = [] }: PaginationProps) {
                 pathName, 
                 searchParams, 
                 search: [
-                  { name:'page', value: page}
+                  { name:'page', value: page === '1' ? '' : page}
                 ]
               }) : ''
             }
 
+            console.log('to', to)
+
             return (
-              <PaginationItem key={link.label} className="hidden md:inline-flex">
-                {isFirst ? <PaginationPrevious href={to}/> : <PaginationNext href={to}/>}
+              <PaginationItem key={link.label} className={cn("hidden md:inline-flex", {
+                'bg-transparent hover:bg-transparent text-slate-400 pointer-events-none': !to,
+              })}>
+                {isFirst ? <PaginationPrevious href={to} /> : <PaginationNext href={to}/>}
               </PaginationItem>
             )
           }
@@ -58,7 +63,7 @@ export default function Pagination({ data = [] }: PaginationProps) {
             pathName, 
             searchParams, 
             search: [
-              { name:'page', value: link.label}
+              { name:'page', value: link.label === '1' ? '' : link.label}
             ]
           }) : '#'
 

@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { buildPathWithSearchParams } from '@/helpers/url';
-import { useDebounceFunction } from '@/hooks/useDebounceFunction';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function SearchInput() {
   const pathName = usePathname()
@@ -14,7 +14,7 @@ export default function SearchInput() {
   const search = (searchParams.get('search') ?? '').toLowerCase()
   const page = searchParams.get('page') ?? '1'
 
-  const handleOnValueChange = useDebounceFunction((value: string) => {
+  const handleOnValueChange = useDebouncedCallback((value: string) => {
     const isSearchChanged = value !== search
     
     const url = buildPathWithSearchParams({
